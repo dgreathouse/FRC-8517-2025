@@ -17,7 +17,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.lib.IUpdateDashboard;
-import frc.robot.lib.SwerveModuleConstants;
 import frc.robot.lib.g;
 
 public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
@@ -44,31 +43,31 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_angularVelocityZ = g.ROBOT.gyro.getAngularVelocityZDevice();
     m_angularVelocityZ.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_HZ);
 
-    g.SWERVE.modules[0] = new SwerveModule(new SwerveModuleConstants(
+    g.SWERVE.modules[0] = new SwerveModule(
       "BR",
       12, true, 
       22, true, 
       2,0.4304,
-      g.CHASSIS.BACK_RIGHT_SWERVE_X, g.CHASSIS.BACK_RIGHT_SWERVE_Y));
-      g.SWERVE.modules[1] = new SwerveModule(new SwerveModuleConstants(
+      g.CHASSIS.BACK_RIGHT_SWERVE_X, g.CHASSIS.BACK_RIGHT_SWERVE_Y);
+      g.SWERVE.modules[1] = new SwerveModule(
         "BL",
         13, false,
         23, true,
         3, -0.1567,
-        g.CHASSIS.BACK_LEFT_SWERVE_X, g.CHASSIS.BACK_LEFT_SWERVE_Y));
-    g.SWERVE.modules[2] = new SwerveModule(new SwerveModuleConstants(
+        g.CHASSIS.BACK_LEFT_SWERVE_X, g.CHASSIS.BACK_LEFT_SWERVE_Y);
+    g.SWERVE.modules[2] = new SwerveModule(
         "F",
         11, true,
         21, true,
         1, 0.04785,
-        g.CHASSIS.FRONT_SWERVE_X, g.CHASSIS.FRONT_SWERVE_Y));
+        g.CHASSIS.FRONT_SWERVE_X, g.CHASSIS.FRONT_SWERVE_Y);
     if (g.SWERVE.COUNT == 4) {
-      g.SWERVE.modules[3] = new SwerveModule(new SwerveModuleConstants(
+      g.SWERVE.modules[3] = new SwerveModule(
           "BL",
           13, false,
           23, false,
           4, 0,
-          0, 0));
+          0, 0);
     }
 
     for(int i = 0; i < g.SWERVE.COUNT; i++){
@@ -91,6 +90,18 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_odometryThread = new OdometryThread();
     m_odometryThread.start();
   }
+
+  public void updateDashboard() {
+    g.SWERVE.totalSwerveCurrent_amps  = 0;
+    for (SwerveModule swerveModule : g.SWERVE.modules) {
+      g.SWERVE.totalSwerveCurrent_amps += Math.abs(swerveModule.getDriveCurrent()) + Math.abs(swerveModule.getSteerCurrent());
+    }
+    SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
+    SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
+    SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleTarget_deg);
+    SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
+  }
+  
   public void updatePositions() {
     for (int i = 0; i < g.SWERVE.COUNT; i++) {
       g.SWERVE.positions[i] = g.SWERVE.modules[i].updatePosition();
@@ -182,18 +193,6 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-  }
-
-  public void updateDashboard() {
-    g.SWERVE.totalSwerveCurrent_amps  = 0;
-    for (SwerveModule swerveModule : g.SWERVE.modules) {
-      g.SWERVE.totalSwerveCurrent_amps += Math.abs(swerveModule.getDriveCurrent()) + Math.abs(swerveModule.getSteerCurrent());
-    }
-    SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
-    SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
-    SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleTarget_deg);
-    SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
-    
   }
 
   public void resetYaw(double _angle) {
