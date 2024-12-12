@@ -81,9 +81,9 @@ public class SwerveModule implements IUpdateDashboard {
         System.out.println(m_name + " Drive Motor Current Config Status =" + status.toString());
 
         m_drivePosition = m_driveMotor.getPosition();
-        m_drivePosition.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_HZ);
+        m_drivePosition.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
         m_driveVelocity = m_driveMotor.getVelocity();
-        m_driveVelocity.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_HZ);
+        m_driveVelocity.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
         // Configure Steer Motor
         m_steerPID.enableContinuousInput(-180.0, 180.0);
         TalonFXConfiguration steerConfigs = new TalonFXConfiguration();
@@ -115,9 +115,9 @@ public class SwerveModule implements IUpdateDashboard {
         m_steerMotor.setPosition(m_canCoder.getPosition().getValueAsDouble() * g.SWERVE.STEER.GEAR_RATIO);
 
         m_steerPosition = m_steerMotor.getPosition();
-        m_steerPosition.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_HZ);
+        m_steerPosition.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
         m_steerVelocity = m_steerMotor.getVelocity();
-        m_steerVelocity.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_HZ);
+        m_steerVelocity.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
     }
 
     /**
@@ -153,7 +153,7 @@ public class SwerveModule implements IUpdateDashboard {
     }
 
     public void setDesiredState(SwerveModuleState _state) {
-        _state.optimize(m_position.angle);// SwerveModuleState.optimize(_state, m_position.angle);
+        _state.optimize(m_position.angle);
         /*-------------------- Steer---------------------*/
         if (g.SWERVE.isEnabled) {
             double steerVolts = m_steerPID.calculate(getSteerActualAngle(), _state.angle.getDegrees());
@@ -165,8 +165,7 @@ public class SwerveModule implements IUpdateDashboard {
         if (g.SWERVE.isEnabled) {
 
             double driveSetVelocity_mps = _state.speedMetersPerSecond * g.DRIVETRAIN.speedMultiplier;
-            double driveVolts = m_drivePID.calculate(m_driveMotor.getVelocity().getValueAsDouble()
-                    / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm, driveSetVelocity_mps);
+            double driveVolts = m_drivePID.calculate(m_driveMotor.getVelocity().getValueAsDouble() / g.SWERVE.DRIVE.MOTOR_ROTATIONS_TO_WHEEL_DISTANCE_rotPm, driveSetVelocity_mps);
             driveVolts = MathUtil.clamp(driveVolts, -6, 6);
             
             driveVolts = driveVolts + m_driveFF.calculate(driveSetVelocity_mps,0.0);

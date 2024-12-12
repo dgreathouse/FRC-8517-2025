@@ -57,7 +57,7 @@ public class g {
         public static Drivetrain drive = new Drivetrain();
         public static Pigeon2 gyro = new Pigeon2(g.CAN_IDS_CANIVORE.PIGEON2, g.CAN_IDS_CANIVORE.NAME);
         public static volatile double angleActual_deg;
-        public static volatile Rotation2d angleActual_rot2d = new Rotation2d();
+        public static volatile Rotation2d angleActual_Rot2d = new Rotation2d();
         public static volatile double angleTarget_deg;
         public static volatile Pose2d pose2d = new Pose2d();
         public static volatile Pose3d pose3d = new Pose3d();
@@ -78,7 +78,7 @@ public class g {
  
         public static final String NAME = "CANivore";
         public static final int PIGEON2 = 5;
-        public static final double UPDATE_FREQ_HZ = 250;
+        public static final double UPDATE_FREQ_hz = 250;
     }
     public static class CV {
         public static final double DEGREES_TO_RADIANS = 0.017453292519943295;
@@ -141,7 +141,7 @@ public class g {
             private static final double MOTOR_MAX_VELOCITY_rotPmin = 5800.0;
             private static final double MOTOR_MAX_VELOCITY_rotPsec = MOTOR_MAX_VELOCITY_rotPmin / 60.0;
             private static final double WHEEL_MAX_VELOCITY_rotPsec = MOTOR_MAX_VELOCITY_rotPsec / GEAR_RATIO;
-            private static final double MOTOR_PEAK_EFFICIENCY_percent = 100;
+            private static final double MOTOR_PEAK_EFFICIENCY_percent = 80;
             public static final double MAX_VELOCITY_mPsec = WHEEL_CIRCUMFERENCE_m
                     * WHEEL_MAX_VELOCITY_rotPsec * MOTOR_PEAK_EFFICIENCY_percent / 100.0;
                     public static final double MAX_ANGULAR_VELOCITY_radPsec = MAX_VELOCITY_mPsec
@@ -172,12 +172,12 @@ public class g {
     }
 
     public static class CHASSIS {
-        public static final double FRONT_SWERVE_X = 352.44/1000.0;
-        public static final double FRONT_SWERVE_Y = 0.0;
-        public static final double BACK_LEFT_SWERVE_X = -255.18/1000.0;
-        public static final double BACK_LEFT_SWERVE_Y = 243.1/1000.0;
-        public static final double BACK_RIGHT_SWERVE_X = -255.18/1000.0;
-        public static final double BACK_RIGHT_SWERVE_Y = -243.1/1000.0;
+        public static final double FRONT_SWERVE_X_POSITION_m = 352.44/1000.0;
+        public static final double FRONT_SWERVE_Y_POSITION_m = 0.0;
+        public static final double BACK_LEFT_SWERVE_X_POSITION_m = -255.18/1000.0;
+        public static final double BACK_LEFT_SWERVE_Y_POSITION_m = 243.1/1000.0;
+        public static final double BACK_RIGHT_SWERVE_X_POSITION_m = -255.18/1000.0;
+        public static final double BACK_RIGHT_SWERVE_Y_POSITION_m = -243.1/1000.0;
         public static final double WHEELBASE_DIAMETER_m = 0.705;
         private static final double WHEELBASE_CIRCUMFERENCE_m = Math.PI * WHEELBASE_DIAMETER_m;
         private static final double WHEELBASE_mPrad = WHEELBASE_CIRCUMFERENCE_m / (2 * Math.PI);

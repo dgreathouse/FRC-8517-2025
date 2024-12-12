@@ -39,28 +39,28 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   @SuppressWarnings("unused")
   private void initialize() {
     m_yaw = g.ROBOT.gyro.getYaw();
-    m_yaw.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_HZ);
+    m_yaw.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
     m_angularVelocityZ = g.ROBOT.gyro.getAngularVelocityZDevice();
-    m_angularVelocityZ.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_HZ);
+    m_angularVelocityZ.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
 
     g.SWERVE.modules[0] = new SwerveModule(
       "BR",
       12, true, 
       22, true, 
       2,0.4304,
-      g.CHASSIS.BACK_RIGHT_SWERVE_X, g.CHASSIS.BACK_RIGHT_SWERVE_Y);
+      g.CHASSIS.BACK_RIGHT_SWERVE_X_POSITION_m, g.CHASSIS.BACK_RIGHT_SWERVE_Y_POSITION_m);
       g.SWERVE.modules[1] = new SwerveModule(
         "BL",
         13, false,
         23, true,
         3, -0.1567,
-        g.CHASSIS.BACK_LEFT_SWERVE_X, g.CHASSIS.BACK_LEFT_SWERVE_Y);
+        g.CHASSIS.BACK_LEFT_SWERVE_X_POSITION_m, g.CHASSIS.BACK_LEFT_SWERVE_Y_POSITION_m);
     g.SWERVE.modules[2] = new SwerveModule(
         "F",
         11, true,
         21, true,
         1, 0.04785,
-        g.CHASSIS.FRONT_SWERVE_X, g.CHASSIS.FRONT_SWERVE_Y);
+        g.CHASSIS.FRONT_SWERVE_X_POSITION_m, g.CHASSIS.FRONT_SWERVE_Y_POSITION_m);
     if (g.SWERVE.COUNT == 4) {
       g.SWERVE.modules[3] = new SwerveModule(
           "BL",
@@ -77,7 +77,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     updatePositions();
 
     m_kinematics = new SwerveDriveKinematics(g.SWERVE.modules[0].m_location, g.SWERVE.modules[1].m_location, g.SWERVE.modules[2].m_location);
-    m_odometry = new SwerveDriveOdometry(m_kinematics, g.ROBOT.angleActual_rot2d, g.SWERVE.positions);
+    m_odometry = new SwerveDriveOdometry(m_kinematics, g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
 
     m_turnPID.enableContinuousInput(-Math.PI, Math.PI);
     m_turnPID.setTolerance(Math.toRadians(.1), 1);
@@ -217,14 +217,12 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
       while (true) {
         /* Now update odometry */
-        for (int i = 0; i < g.SWERVE.COUNT; i++) {
-          g.SWERVE.positions[i] = g.SWERVE.modules[i].updatePosition();
-        }
+        updatePositions();
         m_yaw = g.ROBOT.gyro.getYaw();
         m_angularVelocityZ = g.ROBOT.gyro.getAngularVelocityZDevice();
         g.ROBOT.angleActual_deg = StatusSignal.getLatencyCompensatedValueAsDouble(m_yaw, m_angularVelocityZ);
-        g.ROBOT.angleActual_rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
-        g.ROBOT.pose2d = m_odometry.update(g.ROBOT.angleActual_rot2d, g.SWERVE.positions);
+        g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
+        g.ROBOT.pose2d = m_odometry.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
         g.ROBOT.pose3d = new Pose3d(g.ROBOT.pose2d);
         g.ROBOT.field2d.setRobotPose(g.ROBOT.pose2d);
         try {
