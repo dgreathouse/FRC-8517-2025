@@ -2,28 +2,22 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.defaultCommands;
+package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.g;
-import frc.robot.subsystems.Drivetrain;
 
-
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DrivetrainDefaultCommand extends Command {
-  private Drivetrain m_drive;
   SlewRateLimiter m_stickLimiterLX = new SlewRateLimiter(3);
   SlewRateLimiter m_stickLimiterLY = new SlewRateLimiter(3);
   SlewRateLimiter m_stickLimiterRX = new SlewRateLimiter(3);
-  ChassisSpeeds m_speeds = new ChassisSpeeds();
+  SlewRateLimiter m_stickLimiterRY = new SlewRateLimiter(3);
 
   /** Creates a new DrivetrainDefaultCommand. */
   public DrivetrainDefaultCommand() {
     addRequirements(g.ROBOT.drive);
-    m_drive = g.ROBOT.drive;
   }
 
   // Called when the command is initially scheduled.
@@ -50,24 +44,26 @@ public class DrivetrainDefaultCommand extends Command {
     leftXFiltered = m_stickLimiterLX.calculate(leftXFiltered);
     leftYFiltered = m_stickLimiterLY.calculate(leftYFiltered);
     rightXFiltered = m_stickLimiterRX.calculate(rightXFiltered);
-    rightYFiltered = m_stickLimiterRX.calculate(rightYFiltered);
+    rightYFiltered = m_stickLimiterRY.calculate(rightYFiltered);
 
-    m_drive.setAngleTarget(rightXFiltered,rightYFiltered);
+    g.ROBOT.drive.setAngleTarget(rightXFiltered, rightYFiltered);
     switch (g.DRIVETRAIN.driveMode) {
       case FIELD_CENTRIC:
-        m_drive.driveFieldCentric(leftXFiltered,leftYFiltered,rightXFiltered, g.ROBOT.angleActual_deg);
+        g.ROBOT.drive.driveFieldCentric(
+            leftXFiltered, leftYFiltered, rightXFiltered, g.ROBOT.angleActual_deg);
         break;
       case ANGLE_FIELD_CENTRIC:
-        m_drive.driveAngleFieldCentric(leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleTarget_deg);
+        g.ROBOT.drive.driveAngleFieldCentric(
+            leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleTarget_deg);
         break;
       case POLAR_CENTRIC:
         // Do nothing in teleop since this is used in autonomous
         break;
       case ROBOT_CENTRIC:
-        m_drive.driveRobotCentric(leftXFiltered,leftYFiltered,rightXFiltered);
+        g.ROBOT.drive.driveRobotCentric(leftXFiltered, leftYFiltered, rightXFiltered);
         break;
       case FAST_STOP:
-       // m_drive.fastStop();
+        // g.ROBOT.drive.fastStop();
         break;
       default:
         break;

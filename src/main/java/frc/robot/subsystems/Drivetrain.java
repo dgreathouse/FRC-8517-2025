@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusSignal;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -44,95 +43,102 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_angularVelocityZ.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
 
     g.SWERVE.modules[0] = new SwerveModule(
-      "BR",
-      12, true, 
-      22, true, 
-      2,0.4304,
-      g.CHASSIS.BACK_RIGHT_SWERVE_X_POSITION_m, g.CHASSIS.BACK_RIGHT_SWERVE_Y_POSITION_m);
-      g.SWERVE.modules[1] = new SwerveModule(
+        "BR",
+        12,
+        true,
+        22,
+        true,
+        2,
+        0.4304,
+        g.CHASSIS.BACK_RIGHT_SWERVE_X_POSITION_m,
+        g.CHASSIS.BACK_RIGHT_SWERVE_Y_POSITION_m);
+    g.SWERVE.modules[1] = new SwerveModule(
         "BL",
-        13, false,
-        23, true,
-        3, -0.1567,
-        g.CHASSIS.BACK_LEFT_SWERVE_X_POSITION_m, g.CHASSIS.BACK_LEFT_SWERVE_Y_POSITION_m);
+        13,
+        false,
+        23,
+        true,
+        3,
+        -0.1567,
+        g.CHASSIS.BACK_LEFT_SWERVE_X_POSITION_m,
+        g.CHASSIS.BACK_LEFT_SWERVE_Y_POSITION_m);
     g.SWERVE.modules[2] = new SwerveModule(
         "F",
-        11, true,
-        21, true,
-        1, 0.04785,
-        g.CHASSIS.FRONT_SWERVE_X_POSITION_m, g.CHASSIS.FRONT_SWERVE_Y_POSITION_m);
+        11,
+        true,
+        21,
+        true,
+        1,
+        0.04785,
+        g.CHASSIS.FRONT_SWERVE_X_POSITION_m,
+        g.CHASSIS.FRONT_SWERVE_Y_POSITION_m);
     if (g.SWERVE.COUNT == 4) {
-      g.SWERVE.modules[3] = new SwerveModule(
-          "BL",
-          13, false,
-          23, false,
-          4, 0,
-          0, 0);
+      g.SWERVE.modules[3] = new SwerveModule("BL", 13, false, 23, false, 4, 0, 0, 0);
     }
 
-    for(int i = 0; i < g.SWERVE.COUNT; i++){
+    for (int i = 0; i < g.SWERVE.COUNT; i++) {
       g.SWERVE.positions[i] = new SwerveModulePosition();
       g.DASHBOARD.updates.add(g.SWERVE.modules[i]);
     }
     updatePositions();
 
-    m_kinematics = new SwerveDriveKinematics(g.SWERVE.modules[0].m_location, g.SWERVE.modules[1].m_location, g.SWERVE.modules[2].m_location);
+    m_kinematics = new SwerveDriveKinematics(
+        g.SWERVE.modules[0].m_location,
+        g.SWERVE.modules[1].m_location,
+        g.SWERVE.modules[2].m_location);
     m_odometry = new SwerveDriveOdometry(m_kinematics, g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
 
     m_turnPID.enableContinuousInput(-Math.PI, Math.PI);
-    m_turnPID.setTolerance(Math.toRadians(.1), 1);
+    m_turnPID.setTolerance(Math.toRadians(1.0), Double.POSITIVE_INFINITY);
 
     m_odometryThread = new OdometryThread();
     m_odometryThread.start();
 
     g.DASHBOARD.updates.add(this);
-
-    m_odometryThread = new OdometryThread();
-    m_odometryThread.start();
   }
 
   public void updateDashboard() {
-    g.SWERVE.totalSwerveCurrent_amps  = 0;
+    g.SWERVE.totalSwerveCurrent_amps = 0;
     for (SwerveModule swerveModule : g.SWERVE.modules) {
-      g.SWERVE.totalSwerveCurrent_amps += Math.abs(swerveModule.getDriveCurrent()) + Math.abs(swerveModule.getSteerCurrent());
+      g.SWERVE.totalSwerveCurrent_amps += Math.abs(swerveModule.getDriveCurrent())
+          + Math.abs(swerveModule.getSteerCurrent());
     }
     SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
     SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
     SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleTarget_deg);
     SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
   }
-  
+
   public void updatePositions() {
     for (int i = 0; i < g.SWERVE.COUNT; i++) {
       g.SWERVE.positions[i] = g.SWERVE.modules[i].updatePosition();
     }
   }
-  public void driveRobotCentric(double _xSpeed, double _ySpeed, double _rotate){
+
+  public void driveRobotCentric(double _xSpeed, double _ySpeed, double _rotate) {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.omegaRadiansPerSecond = _rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
 
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
     setSwerveModules(states);
-
   }
-  
+
   public void driveFieldCentric(double _xSpeed, double _ySpeed, double _rotate, double _robotAngle_deg) {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.omegaRadiansPerSecond = _rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
-    
+
     m_speeds.toFieldRelativeSpeeds(new Rotation2d(_robotAngle_deg));
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_speeds);
     setSwerveModules(states);
   }
 
-
-  public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg){
+  public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg) {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
 
-    double rotate = m_turnPID.calculate(Math.toRadians(_robotAngle_deg),Math.toRadians(_targetAngle_deg));
+    double rotate = m_turnPID.calculate(Math.toRadians(_robotAngle_deg), Math.toRadians(_targetAngle_deg));
     rotate = MathUtil.applyDeadband(rotate, 0.01);
 
     m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
@@ -154,11 +160,11 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   }
 
   public void setAngleTarget(double _x, double _y) {
-    double x = _x; //-g.OI.driverController.getRightX();
-    double y = _y; //-g.OI.driverController.getRightY();
+    double x = _x; // -g.OI.driverController.getRightX();
+    double y = _y; // -g.OI.driverController.getRightY();
     double hyp = Math.hypot(x, y);
     double joystickAngle = Math.toDegrees(Math.atan2(x, y));
-    
+
     if (Math.abs(hyp) > g.OI.ANGLE_TARGET_DEADBAND) {
       if (joystickAngle >= -22.5 && joystickAngle <= 22.5) { // North
         g.ROBOT.angleTarget_deg = 0.0;
@@ -168,7 +174,8 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         g.ROBOT.angleTarget_deg = -90.0;
       } else if (joystickAngle >= -157.5 && joystickAngle < -112.5) { // South East
         g.ROBOT.angleTarget_deg = -135.0;
-      } else if ((joystickAngle >= 157.5 && joystickAngle <= 180.0) || (joystickAngle <= -157.5 && joystickAngle > -179.99)) { // South
+      } else if ((joystickAngle >= 157.5 && joystickAngle <= 180.0)
+          || (joystickAngle <= -157.5 && joystickAngle > -179.99)) { // South
         g.ROBOT.angleTarget_deg = 180.0;
       } else if (joystickAngle <= 67.5 && joystickAngle > 22.5) { // North West
         g.ROBOT.angleTarget_deg = 45.0;
@@ -179,17 +186,19 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       }
     }
   }
-  
+
   /**
    * Directly set the g.ROBOT.angleTarget_deg to a angle. Generally this is used
-   * in autonomous or by a button.
-   * 
+   * in autonomous or by
+   * a button.
+   *
    * @param _angle_deg The target angle the robot should PID to in
    *                   AngleFieldCentric Mode.
    */
   public void setAngleTarget(double _angle_deg) {
     g.ROBOT.angleTarget_deg = _angle_deg;
   }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -198,9 +207,10 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   public void resetYaw(double _angle) {
     g.ROBOT.gyro.setYaw(_angle);
   }
+
   /**
    * Is the robot rotational on target for g.ROBOT.AngleTarget_deg
-   * 
+   *
    * @return if the rotation of the robot is on target
    */
   public boolean isRotateAtTarget() {
