@@ -57,6 +57,12 @@ import java.util.List;
  * deg,rad,in,mm,m,sec,ft,rot degPsec, ftPsec, mPsec
  */
 public class g {
+  /** ROBOT class contains the static data associated with Robot.java
+   *  The ROBOT represents the robot as a whole and not one subsystem.
+   *  Therefore the ROBOT class holds data like the subsystem instances, gyro, field,
+   *  and robot Pose. 
+   * 
+   */
   public static class ROBOT {
     public static Drivetrain drive = new Drivetrain();
     public static Pigeon2 gyro = new Pigeon2(g.CAN_IDS_CANIVORE.PIGEON2, g.CAN_IDS_CANIVORE.NAME);
@@ -72,11 +78,18 @@ public class g {
 
     public static final double MAX_BATTERY_SUPPLY_volts = 12.8;
   }
-
+  /** This is one place to store all the devices that are on the RoboRIO CAN bus.
+   *  The RoboRIO CAN bus runs at a rate slower that the CANIvore bus.
+   * 
+   */
   public static class CAN_IDS_ROBORIO {
     public static final String NAME = "rio";
   }
-
+  /** This is one place to store all the devices that are on the CANIvore CAN bus
+   *  The CANIvore is a high speed CAN-FD adapter that was made by CTRE.
+   *  Since this is made by CTRE it can only manage device represented by CTRE, like:
+   *  Pigeon2 gyro, TalonFX motor controllers, CANCoder encoder.
+   */
   public static class CAN_IDS_CANIVORE {
     // 10-25 taken for drivetrain
 
@@ -84,14 +97,15 @@ public class g {
     public static final int PIGEON2 = 5;
     public static final double UPDATE_FREQ_hz = 250;
   }
-
+  /** CV contains the data for Conversion Variables. 
+   * These are used in cases that a quick conversion is needed instead of getting the conversion is some other way.  */
   public static class CV {
     public static final double DEGREES_TO_RADIANS = 0.017453292519943295;
     public static final double RADIANS_TO_DEGREES = 57.29577951308232;
     public static final double INCHES_TO_METERS = 0.0254;
     public static final double MPS_TO_FEETPERSEC = 3.28084;
   }
-
+  /** The OI class contains data associated with Operator Interfaces, such as PS5 Controllers */
   public static class OI {
     // Driver controller
     public static final int DRIVER_CONTROLLER_PORT = 0;
@@ -114,11 +128,11 @@ public class g {
     public static final int OPERATOR_CONTROLLER_PORT = 1;
     public static CommandPS5Controller operatorController = new CommandPS5Controller(OPERATOR_CONTROLLER_PORT);
   }
-
+  /** DASHBOARD store data for the smartdashboard. The smartdashboard that we use for 2025 is Elastic   */
   public static class DASHBOARD {
     public static List<IUpdateDashboard> updates = new ArrayList<>();
   }
-
+  /** Swerve stores data for the Swerve drives. This class contains other classes like DRIVE and STEER */
   public static class SWERVE {
     /* CONTANTS */
     public static final int COUNT = 3;
@@ -127,7 +141,7 @@ public class g {
     public static volatile boolean isEnabled = true;
     public static final SwerveModule[] modules = new SwerveModule[COUNT];
     public static final SwerveModulePosition[] positions = new SwerveModulePosition[COUNT];
-
+    /** The data for the SWERVE Drive motors */
     public static class DRIVE {
 
       private static final double MOTOR_PINION_TEETH = 12.0;
@@ -159,7 +173,7 @@ public class g {
 
       public static final double CURRENT_LIMIT_amps = 50;
     }
-
+    /** The data for the SWERVE Steer motors */
     public static class STEER {
       public static double PID_KP = 0.1;
       public static double PID_KI = 0.0;
