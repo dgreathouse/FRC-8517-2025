@@ -106,45 +106,12 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void configureBindings() {
-    g.OI.DRIVER_RESET_YAW.onTrue(
-        new InstantCommand(() -> g.ROBOT.drive.resetYaw(0.0), g.ROBOT.drive));
-    g.OI.DRIVER_MODE_ANGLEFIELDCENTRIC.onTrue(
-        new InstantCommand(
-            () -> {
-              g.DRIVETRAIN.driveMode = DriveMode.ANGLE_FIELD_CENTRIC;
-            },
-            g.ROBOT.drive));
-    g.OI.DRIVER_MODE_FIELDCENTRIC.onTrue(
-        new InstantCommand(
-            () -> {
-              g.DRIVETRAIN.driveMode = DriveMode.FIELD_CENTRIC;
-            },
-            g.ROBOT.drive));
-    g.OI.DRIVER_MODE_ROBOTCENTRIC.onTrue(
-        new InstantCommand(
-            () -> {
-              g.DRIVETRAIN.driveMode = DriveMode.ROBOT_CENTRIC;
-            },
-            g.ROBOT.drive));
-
-    g.OI.DRIVER_MODE_SPEED_HI.onTrue(
-        new InstantCommand(
-            () -> {
-              g.DRIVETRAIN.speedMultiplier = 1.0;
-            },
-            g.ROBOT.drive));
-    g.OI.DRIVER_MODE_SPEED_LOW.onTrue(
-        new InstantCommand(
-            () -> {
-              g.DRIVETRAIN.speedMultiplier = 0.5;
-            },
-            g.ROBOT.drive));
-
-    g.OI.DRIVER_TOGGLE_DRIVETRAIN_ENABLE.onTrue(
-        new InstantCommand(
-            () -> {
-              g.SWERVE.isEnabled = !g.SWERVE.isEnabled;
-            },
-            g.ROBOT.drive));
+    g.OI.DRIVER_RESET_YAW.onTrue( new InstantCommand(() -> g.ROBOT.drive.resetYaw(0.0), g.ROBOT.drive));
+    g.OI.DRIVER_MODE_ANGLEFIELDCENTRIC.onTrue( new InstantCommand(() -> { g.DRIVETRAIN.driveMode = DriveMode.ANGLE_FIELD_CENTRIC;}, g.ROBOT.drive));
+    g.OI.DRIVER_MODE_FIELDCENTRIC.onTrue( new InstantCommand(() -> { g.DRIVETRAIN.driveMode = DriveMode.FIELD_CENTRIC; }, g.ROBOT.drive));
+    g.OI.DRIVER_MODE_ROBOTCENTRIC.onTrue( new InstantCommand(() -> { g.DRIVETRAIN.driveMode = DriveMode.ROBOT_CENTRIC;}, g.ROBOT.drive));
+    g.OI.DRIVER_MODE_SPEED_HI.onTrue( new InstantCommand(() -> { g.DRIVETRAIN.speedMultiplier = 1.0; }, g.ROBOT.drive));
+    g.OI.DRIVER_MODE_SPEED_LOW.onTrue( new InstantCommand( () -> { g.DRIVETRAIN.speedMultiplier = 0.5; }, g.ROBOT.drive));
+    g.OI.DRIVER_TOGGLE_DRIVETRAIN_ENABLE.onTrue( new InstantCommand( () -> { g.SWERVE.isEnabled = !g.SWERVE.isEnabled; }, g.ROBOT.drive));
   }
 }
