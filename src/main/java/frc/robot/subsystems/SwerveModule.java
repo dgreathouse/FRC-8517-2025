@@ -20,7 +20,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.lib.IUpdateDashboard;
-import frc.robot.lib.SimpleMotorFeedforward_DG;
+import frc.robot.lib.SimplerMotorFeedforward;
 import frc.robot.lib.g;
 
 /** Add your docs here. */
@@ -36,8 +36,8 @@ public class SwerveModule implements IUpdateDashboard {
       new PIDController(g.SWERVE.STEER.PID_KP, g.SWERVE.STEER.PID_KI, 0);
   private PIDController m_drivePID =
       new PIDController(g.SWERVE.DRIVE.PID_KP, g.SWERVE.DRIVE.PID_KI, 0);
-  private SimpleMotorFeedforward_DG m_driveFF =
-      new SimpleMotorFeedforward_DG(g.SWERVE.DRIVE.PID_KS, g.SWERVE.DRIVE.PID_KV, 0.0);
+  private SimplerMotorFeedforward m_driveFF =
+      new SimplerMotorFeedforward(g.SWERVE.DRIVE.PID_KS, g.SWERVE.DRIVE.PID_KV, 0.0);
   private VoltageOut m_steerVoltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private VoltageOut m_driveVoltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private StatusSignal<Angle> m_drivePosition;

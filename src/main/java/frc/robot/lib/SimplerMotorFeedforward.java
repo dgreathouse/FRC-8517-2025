@@ -1,7 +1,7 @@
 package frc.robot.lib;
 
 /** Add your docs here. */
-public class SimpleMotorFeedforward_DG {
+public class SimplerMotorFeedforward {
   /** The static gain, in volts. */
   private final double m_ks;
 
@@ -11,7 +11,7 @@ public class SimpleMotorFeedforward_DG {
   /** The acceleration gain, in V/(units/s²). */
   private final double m_ka;
 
-  public SimpleMotorFeedforward_DG(double ks, double kv, double ka) {
+  public SimplerMotorFeedforward(double ks, double kv, double ka) {
     this.m_ks = ks;
     this.m_kv = kv;
     this.m_ka = ka;
