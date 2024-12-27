@@ -77,5 +77,16 @@ We have two options for performing this functionality where a command will inter
     - The default command may always be making a subsystem go to a particular angle, height or distance based on a controller input.  
     If the controller is not changing the input, a button can ```trigger``` the ```instantCommand``` to change a variable that the defaultCommand is using.
 
+# TODO 
+"todo-tree.general.tags": [
+        "BUG",
+        "HACK",
+        "FIXME",
+        "TODO",
+        "XXX",
+        "[ ]",
+        "[x]"
+    ]
+
 
 
