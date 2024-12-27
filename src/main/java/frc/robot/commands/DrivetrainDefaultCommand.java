@@ -42,18 +42,17 @@ public class DrivetrainDefaultCommand extends Command {
     rightXFiltered = m_stickLimiterRX.calculate(rightXFiltered);
     rightYFiltered = m_stickLimiterRY.calculate(rightYFiltered);
 
-    g.ROBOT.drive.setAngleTarget(rightXFiltered, rightYFiltered);
     switch (g.DRIVETRAIN.driveMode) {
       case FIELD_CENTRIC:
-        g.ROBOT.drive.driveFieldCentric(
-            leftXFiltered, leftYFiltered, rightXFiltered, g.ROBOT.angleActual_deg);
+        g.ROBOT.drive.driveFieldCentric( leftXFiltered, leftYFiltered, rightXFiltered, g.ROBOT.angleActual_deg);
         break;
       case ANGLE_FIELD_CENTRIC:
-        g.ROBOT.drive.driveAngleFieldCentric(
-            leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleTarget_deg);
+        g.ROBOT.drive.setAngleTarget(rightXFiltered, rightYFiltered);
+        g.ROBOT.drive.driveAngleFieldCentric( leftXFiltered, leftYFiltered, g.ROBOT.angleActual_deg, g.ROBOT.angleRobotTarget_deg);
         break;
       case POLAR_CENTRIC:
-        // Do nothing in teleop since this is used in autonomous
+        // This mode is not used by the operator. It is intented for autonomous or teleOp commands. 
+        g.ROBOT.drive.drivePolarFieldCentric(g.ROBOT.speedDriveTarget_mPsec, g.ROBOT.angleActual_deg, g.ROBOT.angleDriveTarget_deg, g.ROBOT.angleRobotTarget_deg);
         break;
       case ROBOT_CENTRIC:
         g.ROBOT.drive.driveRobotCentric(leftXFiltered, leftYFiltered, rightXFiltered);

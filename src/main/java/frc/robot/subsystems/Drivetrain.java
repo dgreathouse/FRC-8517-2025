@@ -105,7 +105,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     }
     SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
     SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
-    SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleTarget_deg);
+    SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleRobotTarget_deg);
     SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
   }
 
@@ -114,7 +114,12 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       g.SWERVE.positions[i] = g.SWERVE.modules[i].updatePosition();
     }
   }
-
+  /** Drive in old fashion mode. Forward on thumb stick makes the robot go forward with reference to the front of the robot.
+   * 
+   * @param _xSpeed The X speed in +/- 1.0
+   * @param _ySpeed The Y speed in +/- 1.0
+   * @param _rotate The rotational speed in +/- 1.0
+   */
   public void driveRobotCentric(double _xSpeed, double _ySpeed, double _rotate) {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
@@ -124,6 +129,13 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     setSwerveModules(states);
   }
 
+  /** Drive in field centric mode. Forward on thumb stick is always forward on field no matter what way the robot is facing
+   * 
+   * @param _xSpeed The X speed in +/- 1.0
+   * @param _ySpeed The Y speed in +/- 1.0
+   * @param _rotate The rotational speed in +/- 1.0
+   * @param _robotAngle_deg The current robot angle 
+   */
   public void driveFieldCentric(double _xSpeed, double _ySpeed, double _rotate, double _robotAngle_deg) {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
@@ -134,12 +146,20 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     setSwerveModules(states);
   }
 
+  /** Use the X and Y values that usually come from a joystick and drive with a robot target angle.
+   * This maintains the robot facing direction to the target angle.
+   * 
+   * @param _xSpeed The X speed in +/- 1.0
+   * @param _ySpeed The Y speed in +/- 1.0
+   * @param _robotAngle_deg The current robot angle 
+   * @param _targetAngle_deg The desired angle for the front of the robot to face.
+   */
   public void driveAngleFieldCentric(double _xSpeed, double _ySpeed, double _robotAngle_deg, double _targetAngle_deg) {
     m_speeds.vxMetersPerSecond = _xSpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
     m_speeds.vyMetersPerSecond = _ySpeed * g.SWERVE.DRIVE.MAX_VELOCITY_mPsec;
 
     double rotate = m_turnPID.calculate(Math.toRadians(_robotAngle_deg), Math.toRadians(_targetAngle_deg));
-    rotate = MathUtil.applyDeadband(rotate, 0.01);
+    rotate = MathUtil.applyDeadband(rotate, g.DRIVETRAIN.TURN_DEADBAND);
 
     m_speeds.omegaRadiansPerSecond = rotate * g.SWERVE.DRIVE.MAX_ANGULAR_VELOCITY_radPsec;
     m_speeds.toFieldRelativeSpeeds(new Rotation2d(_robotAngle_deg));
@@ -147,10 +167,18 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     setSwerveModules(states);
   }
 
-  public void drivePolarFieldCentric(double _speed_mps, double _driveAngle_deg, double _targetAngle_deg) {
-    double y = Math.sin(Units.degreesToRadians(_driveAngle_deg)) * _speed_mps;
-    double x = Math.cos(Units.degreesToRadians(_driveAngle_deg)) * _speed_mps;
-    driveAngleFieldCentric(x, y, g.ROBOT.angleActual_deg, _targetAngle_deg);
+  /** Get the X and Y values from the Drive Angle and call {@link #driveAngleFieldCentric(double, double, double, double)}
+   * 
+   * 
+   * @param _speed The speed to drive at as +/- 1.0
+   * @param _robotAngle_deg The angle of the robot which usually is g.ROBOT.angleActual_deg
+   * @param _driveAngle_deg The drive angle you want the robot to drive at
+   * @param _targetAngle_deg The angle you want the robot front to point to.
+   */
+  public void drivePolarFieldCentric(double _speed, double _robotAngle_deg, double _driveAngle_deg, double _targetAngle_deg) {
+    double y = Math.sin(Units.degreesToRadians(_driveAngle_deg)) * _speed;
+    double x = Math.cos(Units.degreesToRadians(_driveAngle_deg)) * _speed;
+    driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg);
   }
 
   public void setSwerveModules(SwerveModuleState[] _states) {
@@ -158,7 +186,12 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
       g.SWERVE.modules[i].setDesiredState(_states[i]);
     }
   }
-
+  /** Set the drive angle for AngleFieldCentric mode if the  
+   * Hypotenus of the x,y is greater that a threashold
+   * 
+   * @param _x The X value
+   * @param _y The Y value
+   */
   public void setAngleTarget(double _x, double _y) {
     double x = _x; // -g.OI.driverController.getRightX();
     double y = _y; // -g.OI.driverController.getRightY();
@@ -167,22 +200,22 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
     if (Math.abs(hyp) > g.OI.ANGLE_TARGET_DEADBAND) {
       if (joystickAngle >= -22.5 && joystickAngle <= 22.5) { // North
-        g.ROBOT.angleTarget_deg = 0.0;
+        g.ROBOT.angleRobotTarget_deg = 0.0;
       } else if (joystickAngle >= -67.5 && joystickAngle < -22.5) { // North East
-        g.ROBOT.angleTarget_deg = -45.0;
+        g.ROBOT.angleRobotTarget_deg = -45.0;
       } else if (joystickAngle >= -112.5 && joystickAngle < -67.5) { // East
-        g.ROBOT.angleTarget_deg = -90.0;
+        g.ROBOT.angleRobotTarget_deg = -90.0;
       } else if (joystickAngle >= -157.5 && joystickAngle < -112.5) { // South East
-        g.ROBOT.angleTarget_deg = -135.0;
+        g.ROBOT.angleRobotTarget_deg = -135.0;
       } else if ((joystickAngle >= 157.5 && joystickAngle <= 180.0)
           || (joystickAngle <= -157.5 && joystickAngle > -179.99)) { // South
-        g.ROBOT.angleTarget_deg = 180.0;
+        g.ROBOT.angleRobotTarget_deg = 180.0;
       } else if (joystickAngle <= 67.5 && joystickAngle > 22.5) { // North West
-        g.ROBOT.angleTarget_deg = 45.0;
+        g.ROBOT.angleRobotTarget_deg = 45.0;
       } else if (joystickAngle <= 112.5 && joystickAngle > 67.5) { // West
-        g.ROBOT.angleTarget_deg = 90.0;
+        g.ROBOT.angleRobotTarget_deg = 90.0;
       } else if (joystickAngle <= 157.5 && joystickAngle > 112.5) { // South West
-        g.ROBOT.angleTarget_deg = 135.0;
+        g.ROBOT.angleRobotTarget_deg = 135.0;
       }
     }
   }
@@ -196,7 +229,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    *                   AngleFieldCentric Mode.
    */
   public void setAngleTarget(double _angle_deg) {
-    g.ROBOT.angleTarget_deg = _angle_deg;
+    g.ROBOT.angleRobotTarget_deg = _angle_deg;
   }
 
   @Override
@@ -230,7 +263,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
         updatePositions();
         m_yaw = g.ROBOT.gyro.getYaw();
         m_angularVelocityZ = g.ROBOT.gyro.getAngularVelocityZDevice();
-        g.ROBOT.angleActual_deg = StatusSignal.getLatencyCompensatedValueAsDouble(m_yaw, m_angularVelocityZ);
+        g.ROBOT.angleActual_deg = g.SIM.IS_GYRO_DISABLED ? 0.0 : StatusSignal.getLatencyCompensatedValueAsDouble(m_yaw, m_angularVelocityZ);
         g.ROBOT.angleActual_Rot2d = Rotation2d.fromDegrees(g.ROBOT.angleActual_deg);
         g.ROBOT.pose2d = m_odometry.update(g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
         g.ROBOT.pose3d = new Pose3d(g.ROBOT.pose2d);

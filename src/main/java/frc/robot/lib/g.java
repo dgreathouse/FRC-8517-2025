@@ -68,7 +68,9 @@ public class g {
     public static Pigeon2 gyro = new Pigeon2(g.CAN_IDS_CANIVORE.PIGEON2, g.CAN_IDS_CANIVORE.NAME);
     public static volatile double angleActual_deg;
     public static volatile Rotation2d angleActual_Rot2d = new Rotation2d();
-    public static volatile double angleTarget_deg;
+    public static volatile double angleRobotTarget_deg;
+    public static volatile double angleDriveTarget_deg;
+    public static volatile double speedDriveTarget_mPsec;
     public static volatile Pose2d pose2d = new Pose2d();
     public static volatile Pose3d pose3d = new Pose3d();
     public static volatile Field2d field2d = new Field2d();
@@ -207,7 +209,14 @@ public class g {
     public static final double TURN_KP = 4.5;
     public static final double TURN_KI = 1.50;
     public static final double TURN_KD = 0.0;
+    public static final double TURN_DEADBAND = 0.02;
+    public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.125; // 5 inches
+    public static final double AUTO_DRIVE_POSE_ANGLE_TOLERANCE_deg = 1.0; 
     public static volatile DriveMode driveMode = DriveMode.ANGLE_FIELD_CENTRIC;
     public static volatile double speedMultiplier = 1.0;
+  }
+
+  public static class SIM {
+    public static boolean IS_GYRO_DISABLED = false;
   }
 }
