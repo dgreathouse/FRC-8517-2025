@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands.drive;
 
 import edu.wpi.first.math.MathUtil;
@@ -19,20 +15,26 @@ public class AutoDriveToPose extends Command {
   double m_rampuUpTime_sec = 0.5;
   PIDController m_drivePID = new PIDController(1, 0, 0);
   Timer m_timer = new Timer();
-  /** Creates a new DriveToPose. */
+  /** Drive to a pose on the field. Pose must be relative to starting pose or the starting pose must be set based on field pose.
+   * 
+   * @param _pose The Pose to drive to
+   * @param _speed The max speed +/- 1.0 to drive at
+   * @param _timeOut_sec The time to end if pose not reached
+   */
   public AutoDriveToPose(Pose2d _pose, double _speed, double _timeOut_sec) {
     addRequirements(g.ROBOT.drive);
     m_desiredPose = _pose;
     m_speed = _speed;
     m_timeOut_sec = _timeOut_sec;
+    m_drivePID.setTolerance(.1);
+    m_drivePID.setIZone(0.5);
+    m_drivePID.setIntegratorRange(-m_speed/2, m_speed/2);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_drivePID.setTolerance(.1);
-    m_drivePID.setIZone(0.5);
-    m_drivePID.setIntegratorRange(-m_speed/2, m_speed/2);
+
     m_timer.restart();
 
   }
