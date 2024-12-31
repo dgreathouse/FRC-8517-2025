@@ -68,7 +68,7 @@ public class g {
     public static Pigeon2 gyro = new Pigeon2(g.CAN_IDS_CANIVORE.PIGEON2, g.CAN_IDS_CANIVORE.NAME);
     public static volatile double angleActual_deg;
     public static volatile Rotation2d angleActual_Rot2d = new Rotation2d();
-    public static volatile double angleRobotTarget_deg;
+    public static volatile double angleTarget_deg;
     public static volatile double angleDriveTarget_deg;
     public static volatile double speedDriveTarget_mPsec;
     public static volatile Pose2d pose2d = new Pose2d();

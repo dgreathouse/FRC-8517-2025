@@ -32,12 +32,12 @@ public class SwerveModule implements IUpdateDashboard {
   private TalonFX m_steerMotor;
   private CANcoder m_canCoder;
   private SwerveModulePosition m_position = new SwerveModulePosition();
-  private PIDController m_steerPID =
-      new PIDController(g.SWERVE.STEER.PID_KP, g.SWERVE.STEER.PID_KI, 0);
-  private PIDController m_drivePID =
-      new PIDController(g.SWERVE.DRIVE.PID_KP, g.SWERVE.DRIVE.PID_KI, 0);
-  private SimplerMotorFeedforward m_driveFF =
-      new SimplerMotorFeedforward(g.SWERVE.DRIVE.PID_KS, g.SWERVE.DRIVE.PID_KV, 0.0);
+  // TODO Tune Steer PID kP, kI, kD
+  private PIDController m_steerPID = new PIDController(g.SWERVE.STEER.PID_KP, g.SWERVE.STEER.PID_KI, 0);
+  // TODO: Tune Drive PID kP, kI, kD
+  private PIDController m_drivePID = new PIDController(g.SWERVE.DRIVE.PID_KP, g.SWERVE.DRIVE.PID_KI, 0);
+  // TODO Tune Drive FF kV, kS, and kA
+  private SimplerMotorFeedforward m_driveFF = new SimplerMotorFeedforward(g.SWERVE.DRIVE.PID_KS, g.SWERVE.DRIVE.PID_KV, 0.0);
   private VoltageOut m_steerVoltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private VoltageOut m_driveVoltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private StatusSignal<Angle> m_drivePosition;

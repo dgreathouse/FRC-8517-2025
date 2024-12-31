@@ -19,24 +19,18 @@ import frc.robot.lib.IUpdateDashboard;
 import frc.robot.lib.g;
 
 public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
-  SwerveDriveKinematics m_kinematics;
-  SwerveDriveOdometry m_odometry;
-
-  OdometryThread m_odometryThread;
-  StatusSignal<Angle> m_yaw;
-  StatusSignal<AngularVelocity> m_angularVelocityZ;
-
+  private SwerveDriveKinematics m_kinematics;
+  private SwerveDriveOdometry m_odometry;
+  private OdometryThread m_odometryThread;
+  private StatusSignal<Angle> m_yaw;
+  private StatusSignal<AngularVelocity> m_angularVelocityZ;
   private PIDController m_turnPID = new PIDController(g.DRIVETRAIN.TURN_KP, g.DRIVETRAIN.TURN_KI, g.DRIVETRAIN.TURN_KD);
 
   private ChassisSpeeds m_speeds = new ChassisSpeeds();
 
   /** Creates a new Drivetrain. */
-  public Drivetrain() {
-    initialize();
-  }
-
   @SuppressWarnings("unused")
-  private void initialize() {
+  public Drivetrain() {
     m_yaw = g.ROBOT.gyro.getYaw();
     m_yaw.setUpdateFrequency(g.CAN_IDS_CANIVORE.UPDATE_FREQ_hz);
     m_angularVelocityZ = g.ROBOT.gyro.getAngularVelocityZDevice();
@@ -97,23 +91,11 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     g.DASHBOARD.updates.add(this);
   }
 
-  public void updateDashboard() {
-    g.SWERVE.totalSwerveCurrent_amps = 0;
-    for (SwerveModule swerveModule : g.SWERVE.modules) {
-      g.SWERVE.totalSwerveCurrent_amps += Math.abs(swerveModule.getDriveCurrent())
-          + Math.abs(swerveModule.getSteerCurrent());
-    }
-    SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
-    SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
-    SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleRobotTarget_deg);
-    SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
   }
 
-  public void updatePositions() {
-    for (int i = 0; i < g.SWERVE.COUNT; i++) {
-      g.SWERVE.positions[i] = g.SWERVE.modules[i].updatePosition();
-    }
-  }
   /** Drive in old fashion mode. Forward on thumb stick makes the robot go forward with reference to the front of the robot.
    * 
    * @param _xSpeed The X speed in +/- 1.0
@@ -181,6 +163,11 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg);
   }
 
+  /**
+   * This is the final method of all drive methods that sends the array of 
+   * Swerve Module angles and speeds to the SwerveModule classes
+   * @param _states
+   */
   public void setSwerveModules(SwerveModuleState[] _states) {
     for (int i = 0; i < g.SWERVE.COUNT; i++) {
       g.SWERVE.modules[i].setDesiredState(_states[i]);
@@ -200,54 +187,66 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
 
     if (Math.abs(hyp) > g.OI.ANGLE_TARGET_DEADBAND) {
       if (joystickAngle >= -22.5 && joystickAngle <= 22.5) { // North
-        g.ROBOT.angleRobotTarget_deg = 0.0;
+        g.ROBOT.angleTarget_deg = 0.0;
       } else if (joystickAngle >= -67.5 && joystickAngle < -22.5) { // North East
-        g.ROBOT.angleRobotTarget_deg = -45.0;
+        g.ROBOT.angleTarget_deg = -45.0;
       } else if (joystickAngle >= -112.5 && joystickAngle < -67.5) { // East
-        g.ROBOT.angleRobotTarget_deg = -90.0;
+        g.ROBOT.angleTarget_deg = -90.0;
       } else if (joystickAngle >= -157.5 && joystickAngle < -112.5) { // South East
-        g.ROBOT.angleRobotTarget_deg = -135.0;
+        g.ROBOT.angleTarget_deg = -135.0;
       } else if ((joystickAngle >= 157.5 && joystickAngle <= 180.0)
           || (joystickAngle <= -157.5 && joystickAngle > -179.99)) { // South
-        g.ROBOT.angleRobotTarget_deg = 180.0;
+        g.ROBOT.angleTarget_deg = 180.0;
       } else if (joystickAngle <= 67.5 && joystickAngle > 22.5) { // North West
-        g.ROBOT.angleRobotTarget_deg = 45.0;
+        g.ROBOT.angleTarget_deg = 45.0;
       } else if (joystickAngle <= 112.5 && joystickAngle > 67.5) { // West
-        g.ROBOT.angleRobotTarget_deg = 90.0;
+        g.ROBOT.angleTarget_deg = 90.0;
       } else if (joystickAngle <= 157.5 && joystickAngle > 112.5) { // South West
-        g.ROBOT.angleRobotTarget_deg = 135.0;
+        g.ROBOT.angleTarget_deg = 135.0;
       }
     }
   }
 
   /**
    * Directly set the g.ROBOT.angleTarget_deg to a angle. Generally this is used
-   * in autonomous or by
-   * a button.
+   * in autonomous or by a button.
    *
    * @param _angle_deg The target angle the robot should PID to in
    *                   AngleFieldCentric Mode.
    */
   public void setAngleTarget(double _angle_deg) {
-    g.ROBOT.angleRobotTarget_deg = _angle_deg;
+    g.ROBOT.angleTarget_deg = _angle_deg;
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
-
-  public void resetYaw(double _angle) {
-    g.ROBOT.gyro.setYaw(_angle);
-  }
-
-  /**
+    /**
    * Is the robot rotational on target for g.ROBOT.AngleTarget_deg
    *
    * @return if the rotation of the robot is on target
    */
   public boolean isRotateAtTarget() {
     return m_turnPID.atSetpoint();
+  }
+
+  public void resetYaw(double _angle) {
+    g.ROBOT.gyro.setYaw(_angle);
+  }
+
+  public void updateDashboard() {
+    g.SWERVE.totalSwerveCurrent_amps = 0;
+    for (SwerveModule swerveModule : g.SWERVE.modules) {
+      g.SWERVE.totalSwerveCurrent_amps += Math.abs(swerveModule.getDriveCurrent())
+          + Math.abs(swerveModule.getSteerCurrent());
+    }
+    SmartDashboard.putNumber("Swerve/totalSwerveCurrent_amps", g.SWERVE.totalSwerveCurrent_amps);
+    SmartDashboard.putData("Robot/Field2d", g.ROBOT.field2d);
+    SmartDashboard.putNumber("Robot/angleTarget_deg", g.ROBOT.angleTarget_deg);
+    SmartDashboard.putNumber("Robot/angleActual_deg", g.ROBOT.angleActual_deg);
+  }
+
+  private void updatePositions() {
+    for (int i = 0; i < g.SWERVE.COUNT; i++) {
+      g.SWERVE.positions[i] = g.SWERVE.modules[i].updatePosition();
+    }
   }
 
   private class OdometryThread extends Thread {

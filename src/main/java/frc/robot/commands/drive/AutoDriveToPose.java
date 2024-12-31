@@ -34,7 +34,6 @@ public class AutoDriveToPose extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
     m_timer.restart();
 
   }
