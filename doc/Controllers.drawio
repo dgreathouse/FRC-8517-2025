@@ -19,29 +19,14 @@
         <mxCell id="Dre4zNSUhhUe5slktHId-5" value="&lt;b&gt;Angle Field Centric&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="140" y="310" width="100" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="Dre4zNSUhhUe5slktHId-6" value="&lt;b&gt;Rotate Field Centric&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="140" y="245.15" width="100" height="30" as="geometry" />
-        </mxCell>
         <mxCell id="Dre4zNSUhhUe5slktHId-7" value="&lt;b&gt;Drive Speed LOW&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="90" y="215.14999999999998" width="100" height="30" as="geometry" />
+          <mxGeometry x="130" y="205.14999999999998" width="100" height="30" as="geometry" />
         </mxCell>
         <mxCell id="Dre4zNSUhhUe5slktHId-8" value="&lt;b&gt;Drive Speed HIGH&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="670" y="215.15" width="110" height="30" as="geometry" />
         </mxCell>
         <mxCell id="Dre4zNSUhhUe5slktHId-9" value="&lt;b&gt;Reset Robot&lt;/b&gt;&lt;div&gt;&lt;b&gt;Angle&lt;/b&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="330" y="181.3" width="60" height="44.85" as="geometry" />
-        </mxCell>
-        <mxCell id="Dre4zNSUhhUe5slktHId-10" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="370" y="290" as="sourcePoint" />
-            <mxPoint x="420" y="240" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="Dre4zNSUhhUe5slktHId-12" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="370" y="290" as="sourcePoint" />
-            <mxPoint x="420" y="240" as="targetPoint" />
-          </mxGeometry>
         </mxCell>
         <mxCell id="Dre4zNSUhhUe5slktHId-13" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.344;entryY=0.472;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="Dre4zNSUhhUe5slktHId-9" target="Dre4zNSUhhUe5slktHId-1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -60,6 +45,9 @@
         </mxCell>
         <mxCell id="Dre4zNSUhhUe5slktHId-17" value="&lt;b&gt;&lt;font style=&quot;font-size: 19px;&quot;&gt;Driver Controller&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="330" y="90" width="220" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Sbi9m-Vkhul2fB6xkHcH-1" value="&lt;b&gt;Swap Controller&lt;/b&gt;&lt;div&gt;&lt;b&gt;Directions&lt;/b&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="140" y="245.14999999999998" width="100" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

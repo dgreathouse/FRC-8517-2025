@@ -29,7 +29,13 @@ public class DrivetrainDefaultCommand extends Command {
     double leftXRaw = -g.OI.driverController.getLeftY();
     double rightXRaw = -g.OI.driverController.getRightX();
     double rightYRaw = -g.OI.driverController.getRightY();
-
+    
+    if(!g.OI.driverControllerSignNegative){
+      leftYRaw = -leftYRaw;
+      leftXRaw = -leftXRaw;
+      rightXRaw = -rightXRaw;
+      rightYRaw = -rightYRaw;
+    }
     // Limit the inputs for a deadband related to the joystick
     double leftYFiltered = MathUtil.applyDeadband(leftYRaw, 0.08, 1.0);
     double leftXFiltered = MathUtil.applyDeadband(leftXRaw, 0.08, 1.0);

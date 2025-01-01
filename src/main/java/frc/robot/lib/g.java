@@ -117,15 +117,16 @@ public class g {
     public static final Trigger DRIVER_MODE_FIELDCENTRIC = driverController.povLeft();
     public static final Trigger DRIVER_MODE_ROBOTCENTRIC = driverController.povRight();
     public static final Trigger DRIVER_MODE_ANGLEFIELDCENTRIC = driverController.povDown();
-    public static final Trigger DRIVER_MODE_ROTATEFIELDCENTRIC = driverController.povUp();
-
+    public static final Trigger DRIVER_SWAP_THUMBSTICK_DIRECTIONS = driverController.povUp();
+    public static boolean driverControllerSignNegative = true;
     public static final Trigger DRIVER_MODE_SPEED_HI = driverController.R1();
     public static final Trigger DRIVER_MODE_SPEED_LOW = driverController.L1();
 
     public static final Trigger DRIVER_RESET_YAW = driverController.create();
+    public static final Trigger DRIVER_DISABLE_YAW = driverController.options();
 
     public static final Trigger DRIVER_TOGGLE_DRIVETRAIN_ENABLE = driverController.touchpad();
-
+    
     // Operator controller
     public static final int OPERATOR_CONTROLLER_PORT = 1;
     public static CommandPS5Controller operatorController = new CommandPS5Controller(OPERATOR_CONTROLLER_PORT);
