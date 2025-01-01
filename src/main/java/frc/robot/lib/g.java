@@ -206,8 +206,8 @@ public class g {
   }
 
   public static class DRIVETRAIN {
-    public static final double TURN_KP = 4.5;
-    public static final double TURN_KI = 1.50;
+    public static final double TURN_KP = 1.0;
+    public static final double TURN_KI = 0.0;
     public static final double TURN_KD = 0.0;
     public static final double TURN_DEADBAND = 0.02;
     public static final double AUTO_DRIVE_POSE_DISTANCE_TOLERANCE_m = 0.125; // 5 inches

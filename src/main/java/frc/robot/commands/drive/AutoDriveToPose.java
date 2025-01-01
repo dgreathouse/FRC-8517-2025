@@ -40,7 +40,7 @@ public class AutoDriveToPose extends Command {
 
   // TODO: Test this class. Possible issues.
   //  [ ] Starting Pose
-  //  [ ]Tolerance
+  //  [ ] Tolerance
   //  [ ] PIDs
 
   @Override
@@ -51,13 +51,13 @@ public class AutoDriveToPose extends Command {
     double speed =  m_drivePID.calculate(0,driveDistance_m);
     speed = rampUpValue(speed, m_rampuUpTime_sec);
     speed = MathUtil.clamp(speed, -m_speed, m_speed);
-    g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, driveAngle_deg, m_desiredPose.getRotation().getDegrees());
+    g.ROBOT.drive.drivePolarFieldCentric(speed, g.ROBOT.angleActual_deg, m_desiredPose.getRotation().getDegrees(), driveAngle_deg);
 
   }
-  private double rampUpValue(double _val, double rampTime_sec){   
+  private double rampUpValue(double _val, double _rampTime_sec){   
     double currentTime_sec = m_timer.get();                                        
-    if(currentTime_sec < rampTime_sec){
-      _val = _val * currentTime_sec / rampTime_sec;
+    if(currentTime_sec < _rampTime_sec){
+      _val = _val * currentTime_sec / _rampTime_sec;
     }
     return _val;
   }

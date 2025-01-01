@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commandGroups.AutoDoNothing;
+import frc.robot.commandGroups.AutoDriveRotateTest;
 import frc.robot.defaultCommands.DrivetrainDefaultCommand;
 import frc.robot.lib.DriveMode;
 import frc.robot.lib.IUpdateDashboard;
@@ -33,6 +34,7 @@ public class Robot extends TimedRobot {
 
     // Setup the autonomous play default and send to dashboard for selection
     m_autoChooser.setDefaultOption("Do Nothing", new AutoDoNothing());
+    m_autoChooser.addOption("Drive Rotate Test", new AutoDriveRotateTest());
     SmartDashboard.putData("Autonomouse Play", m_autoChooser);
 
     // Start telemetry in a slower rate than the main loop

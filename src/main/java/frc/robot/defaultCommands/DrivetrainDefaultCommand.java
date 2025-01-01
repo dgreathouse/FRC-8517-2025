@@ -52,7 +52,7 @@ public class DrivetrainDefaultCommand extends Command {
         break;
       case POLAR_CENTRIC:
         // This mode is not used by the operator. It is intented for autonomous or teleOp commands. 
-        g.ROBOT.drive.drivePolarFieldCentric(g.ROBOT.speedDriveTarget_mPsec, g.ROBOT.angleActual_deg, g.ROBOT.angleDriveTarget_deg, g.ROBOT.angleTarget_deg);
+        g.ROBOT.drive.drivePolarFieldCentric(g.ROBOT.speedDriveTarget_mPsec, g.ROBOT.angleActual_deg, g.ROBOT.angleTarget_deg, g.ROBOT.angleDriveTarget_deg);
         break;
       case ROBOT_CENTRIC:
         g.ROBOT.drive.driveRobotCentric(leftXFiltered, leftYFiltered, rightXFiltered);

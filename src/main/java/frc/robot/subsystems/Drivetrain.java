@@ -24,6 +24,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
   private OdometryThread m_odometryThread;
   private StatusSignal<Angle> m_yaw;
   private StatusSignal<AngularVelocity> m_angularVelocityZ;
+  // TODO: Tune KP,KI,KD max output should be +/-1 Start around 1/3.14 for Kp
   private PIDController m_turnPID = new PIDController(g.DRIVETRAIN.TURN_KP, g.DRIVETRAIN.TURN_KI, g.DRIVETRAIN.TURN_KD);
 
   private ChassisSpeeds m_speeds = new ChassisSpeeds();
@@ -83,7 +84,10 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
     m_odometry = new SwerveDriveOdometry(m_kinematics, g.ROBOT.angleActual_Rot2d, g.SWERVE.positions);
 
     m_turnPID.enableContinuousInput(-Math.PI, Math.PI);
+    // TODO set Derivative tolerance so atSetPoint only returns true at low speeds
     m_turnPID.setTolerance(Math.toRadians(1.0), Double.POSITIVE_INFINITY);
+    m_turnPID.setIZone(Math.toRadians(45));
+    m_turnPID.setIntegratorRange(-0.5, 0.5);
 
     m_odometryThread = new OdometryThread();
     m_odometryThread.start();
@@ -157,7 +161,7 @@ public class Drivetrain extends SubsystemBase implements IUpdateDashboard {
    * @param _driveAngle_deg The drive angle you want the robot to drive at
    * @param _targetAngle_deg The angle you want the robot front to point to.
    */
-  public void drivePolarFieldCentric(double _speed, double _robotAngle_deg, double _driveAngle_deg, double _targetAngle_deg) {
+  public void drivePolarFieldCentric(double _speed, double _robotAngle_deg, double _targetAngle_deg, double _driveAngle_deg) {
     double y = Math.sin(Units.degreesToRadians(_driveAngle_deg)) * _speed;
     double x = Math.cos(Units.degreesToRadians(_driveAngle_deg)) * _speed;
     driveAngleFieldCentric(x, y, _robotAngle_deg, _targetAngle_deg);
